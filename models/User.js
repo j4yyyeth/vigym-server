@@ -20,6 +20,11 @@ const userSchema = new Schema (
         },
 
         workouts: [{type: Schema.Types.ObjectId, ref: "Workout"}]
+    },
+
+    {
+        timeseries: true,
+        timestamps: true,
     }
 )
 

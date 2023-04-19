@@ -8,6 +8,7 @@ var cors = require('cors');
 
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+// more routers here!
 const { error } = require('console');
 
 var app = express();
@@ -29,6 +30,7 @@ app.use(
 
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+// more routers here!
 
 app.use(function (req, res, next) {
     next(createError(404));
@@ -42,6 +44,5 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to mongo: ", err);
   });
-
 
 module.exports = app;

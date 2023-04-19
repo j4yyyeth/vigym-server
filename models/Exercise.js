@@ -5,6 +5,11 @@ const exerciseSchema = new Schema (
         exercise: String,
         sets: Number,
         reps: Number
+    },
+    
+    {
+        timeseries: true,
+        timestamps: true,
     }
 )
 

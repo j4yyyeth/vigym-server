@@ -11,28 +11,29 @@ const isAuthenticated = require('../middleware/isAuthenticated')
 
 
 router.post("/signup", (req, res, next) => {
-  if (!req.body.email || !req.body.password) {
-    return res.status(400).json({ message: "please fill out all fields" });
+  if (!req.body.email  || !req.body.username || !req.body.password) {
+    return res.status(400).json({ message: "Please fill out all fields" });
   }
 
-  User.findOne({ username: req.body.username })
+  User.findOne({ email: req.body.email })
     .then((foundUser) => {
       if (foundUser) {
-        return res.status(400).json({ message: "Username is already taken" });
+        return res.status(400).json({ message: "User is already taken" });
       } else {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hashedPass = bcrypt.hashSync(req.body.password, salt);
 
         User.create({
           password: hashedPass,
-          email: req.body.email
+          email: req.body.email,
+          username: req.body.username
         })
           .then((createdUser) => {
-            const payload = { _id: createdUser._id, email: createdUser.email };
+            const payload = { _id: createdUser._id, email: createdUser.email, username: createdUser.username };
 
             const token = jwt.sign(payload, process.env.SECRET, {
               algorithm: "HS256",
-              expiresIn: "24hr",
+              expiresIn: "24hr" // session time
             });
             res.json({ token: token, id: createdUser._id });
           })
@@ -47,14 +48,14 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-  if (!req.body.email || !req.body.password) {
-    return res.status(400).json({ message: "please fill out both fields" });
+  if (!req.body.email || !req.body.username || !req.body.password) {
+    return res.status(400).json({ message: "Please fill out both fields" });
   }
 
   User.findOne({ email: req.body.email })
     .then((foundUser) => {
       if (!foundUser) {
-        return res.status(401).json({ message: "Email or Password is incorrect!!!" });
+        return res.status(401).json({ message: "Email or Password is incorrect" });
       }
 
       const doesMatch = bcrypt.compareSync(
@@ -63,11 +64,11 @@ router.post("/login", (req, res, next) => {
       );
 
       if (doesMatch) {
-        const payload = { _id: foundUser._id, email: foundUser.email };
+        const payload = { _id: foundUser._id, email: foundUser.email, username: foundUser.username };
 
         const token = jwt.sign(payload, process.env.SECRET, {
           algorithm: "HS256",
-          expiresIn: "24hr",
+          expiresIn: "24hr" // session time
         });
         res.json({ token: token, id: foundUser._id, message: `Welcome ${foundUser.email}` });
       } else {
@@ -80,7 +81,16 @@ router.post("/login", (req, res, next) => {
 });
 
 router.get("/verify", isAuthenticated, (req, res) => {
-  return res.status(200).json(req.user);
+  User.findOne({_id: req.user._id})
+    .populate('workouts')
+    .then((foundUser) => {
+      const payload = { ...foundUser };
+      delete payload._doc.password;
+      res.status(200).json(payload._doc);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
 });
 
 
