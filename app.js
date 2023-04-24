@@ -8,7 +8,8 @@ var cors = require('cors');
 
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
-// more routers here!
+var exercisesRouter = require('./routes/exercises');
+
 const { error } = require('console');
 
 var app = express();
@@ -30,7 +31,7 @@ app.use(
 
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-// more routers here!
+app.use('/exercises', exercisesRouter);
 
 app.use(function (req, res, next) {
     next(createError(404));
