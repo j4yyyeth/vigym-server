@@ -3,9 +3,7 @@ var router = express.Router();
 const axios = require('axios');
 require('dotenv').config();
 
-module.exports = router;
-
-router.get("/", async (res, req, next) => {
+router.get("/", async (req, res, next) => {
     const options = {
         method: 'GET',
         url: 'https://exercisedb.p.rapidapi.com/exercises',
@@ -18,8 +16,10 @@ router.get("/", async (res, req, next) => {
 
       try {
         const response = await axios.request(options);
-        console.log(response.data);
+        res.json(response.data);
       } catch (err) {
         console.log(err)
       }
 });
+
+module.exports = router;
