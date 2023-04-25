@@ -5,16 +5,29 @@ const User = require('../models/User');
 const Workout = require('../models/Workout');
 const Exercise = require('../models/Exercise');
 
-router.get('/', (req, res, next) => {
-  Workout.find()
-//   .sort({createdAt: -1})
-  .then((response) => res.json(response))
-  .catch((err) => console.log(err));
-});
+router.get('/user/:userId', async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const user = await User.findById(userId).populate({
+        path: 'workouts',
+        populate: { path: 'exercises' },
+      });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json(user.workouts);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json(err);
+    }
+  });
 
 router.post('/create/:userId', async (req, res, next) => {
+    console.log('Request params:', req.params);
     try {
-        const {userId} = req.params.userId;
+        const {userId} = req.params;
         const {exercises} = req.body;
 
         const user = await User.findById(userId);
@@ -23,7 +36,7 @@ router.post('/create/:userId', async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const workout = new Workout();
+        const workout = new Workout({ user: user._id });
         await workout.save();
     
         const createdExercises = await Exercise.insertMany(exercises);
