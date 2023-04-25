@@ -4,7 +4,8 @@ const exerciseSchema = new Schema (
     {
         exercise: String,
         sets: Number,
-        reps: Number
+        reps: Number,
+        weight: Number
     },
     
     {
