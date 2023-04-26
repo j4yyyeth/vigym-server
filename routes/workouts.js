@@ -10,7 +10,7 @@ router.get('/user/:userId', async (req, res, next) => {
       const { userId } = req.params;
       const user = await User.findById(userId).populate({
         path: 'workouts',
-        populate: { path: 'exercises' },
+        populate: { path: 'exercises' }
       });
   
       if (!user) {
@@ -23,6 +23,22 @@ router.get('/user/:userId', async (req, res, next) => {
       return res.status(400).json(err);
     }
   });
+
+  router.get('/all', async (req, res, next) => {
+    try {
+      const allWorkouts = await Workout.find().populate('exercises');
+
+      if (!allWorkouts) {
+        return;
+      }
+
+      res.status(200).json(allWorkouts);
+    }
+    catch (err) {
+      console.log(err);
+      return res.status(400).json(err);
+    }
+  })
 
 router.post('/create/:userId', async (req, res, next) => {
     console.log('Request params:', req.params);
