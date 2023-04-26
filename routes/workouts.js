@@ -14,32 +14,27 @@ router.get('/user/:userId', async (req, res, next) => {
       });
   
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.json({ message: 'User not found' });
       }
   
-      res.status(200).json(user.workouts);
+      res.json(user.workouts);
     } catch (err) {
       console.log(err);
-      return res.status(400).json(err);
+      return res.json(err);
     }
   });
 
   router.get('/all', async (req, res, next) => {
     try {
-      const allUsers = await User.find().populate({
-        path: 'workouts',
-        populate: { path: 'exercises' }
-      });
+      const allWorkouts = await Workout.find().populate('exercises');
 
-      if (!allUsers) {
+      if (!allWorkouts) {
         return;
       }
-
-      res.status(200).json(allUsers);
+      res.json(allWorkouts);
     }
     catch (err) {
       console.log(err);
-      return res.status(400).json(err);
     }
   })
 
@@ -52,7 +47,7 @@ router.post('/create/:userId', async (req, res, next) => {
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.json({ message: 'User not found' });
         }
 
         const workout = new Workout({ user: user._id });
@@ -69,11 +64,11 @@ router.post('/create/:userId', async (req, res, next) => {
         user.workouts.push(workout._id);
         await user.save();
 
-        res.status(201).json({ message: 'Workout created successfully', workout });
+        res.json({ message: 'Workout created successfully', workout });
     } 
     catch (err) {
         console.log(err);
-        return res.status(400).json(err);
+        return res.json(err);
     }
 });
 
