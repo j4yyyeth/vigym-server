@@ -26,13 +26,16 @@ router.get('/user/:userId', async (req, res, next) => {
 
   router.get('/all', async (req, res, next) => {
     try {
-      const allWorkouts = await Workout.find().populate('exercises');
+      const allUsers = await User.find().populate({
+        path: 'workouts',
+        populate: { path: 'exercises' }
+      });
 
-      if (!allWorkouts) {
+      if (!allUsers) {
         return;
       }
 
-      res.status(200).json(allWorkouts);
+      res.status(200).json(allUsers);
     }
     catch (err) {
       console.log(err);
