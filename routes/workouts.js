@@ -79,6 +79,10 @@ router.delete('/delete/:id', async (req, res, next) => {
       return res.json({ message: 'Workout not found' });
     }
 
+    for (const exerciseId of workout.exercises) {
+      await Exercise.findByIdAndDelete(exerciseId);
+    }
+
     await Workout.findByIdAndDelete(workoutId);
 
     res.json({ message: 'Workout deleted' });
@@ -89,7 +93,7 @@ router.delete('/delete/:id', async (req, res, next) => {
   }
 });
 
-router.put('/update/:id', async (req, res, next) => {
+router.put('/edit/:id', async (req, res, next) => {
   try {
     const workoutId = req.params.id;
     const workout = await Workout.findByIdAndUpdate(workoutId, req.body, {new: true});
