@@ -18,9 +18,9 @@ router.get('/user/:userId', async (req, res, next) => {
       }
   
       res.json(user.workouts);
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(err);
-      return res.json(err);
     }
   });
 
@@ -39,7 +39,6 @@ router.get('/user/:userId', async (req, res, next) => {
   })
 
 router.post('/create/:userId', async (req, res, next) => {
-    console.log('Request params:', req.params);
     try {
         const {userId} = req.params;
         const {exercises} = req.body;
@@ -67,9 +66,30 @@ router.post('/create/:userId', async (req, res, next) => {
         res.json({ message: 'Workout created successfully', workout });
     } 
     catch (err) {
-        console.log(err);
-        return res.json(err);
+      console.log(err);
     }
+});
+
+router.post('/delete/:id', async (req, res, next) => {
+  try {
+    const workoutId = req.params.id;
+    const workout = await Workout.findById(workoutId);
+
+    if (!workout) {
+      return res.json({ message: 'Workout not found' });
+    }
+
+    if (workout.userId.toString() !== req.user._id.toString()) {
+      return res.json({ message: 'Unauthorized' });
+    }
+
+    await Workout.findByIdAndDelete(workoutId);
+
+    res.json({ message: 'Workout deleted' });
+
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = router;
