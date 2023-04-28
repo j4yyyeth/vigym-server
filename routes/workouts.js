@@ -70,7 +70,7 @@ router.post('/create/:userId', async (req, res, next) => {
     }
 });
 
-router.post('/delete/:id', async (req, res, next) => {
+router.delete('/delete/:id', async (req, res, next) => {
   try {
     const workoutId = req.params.id;
     const workout = await Workout.findById(workoutId);
@@ -79,17 +79,30 @@ router.post('/delete/:id', async (req, res, next) => {
       return res.json({ message: 'Workout not found' });
     }
 
-    if (workout.userId.toString() !== req.user._id.toString()) {
-      return res.json({ message: 'Unauthorized' });
-    }
-
     await Workout.findByIdAndDelete(workoutId);
 
     res.json({ message: 'Workout deleted' });
 
-  } catch (err) {
+  } 
+  catch (err) {
     console.log(err);
   }
+});
+
+router.put('/update/:id', async (req, res, next) => {
+  try {
+    const workoutId = req.params.id;
+    const workout = await Workout.findByIdAndUpdate(workoutId, req.body, {new: true});
+
+    if (!workout) {
+      return res.json({ message: 'Workout not found' });
+    }
+
+    await Workout.findByIdAndUpdate(workoutId);
+  }
+  catch (err) {
+    console.log(err)
+  }   
 });
 
 module.exports = router;
