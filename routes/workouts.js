@@ -90,18 +90,31 @@ router.delete('/delete/:id', async (req, res, next) => {
 
 })
 
-router.put('/edit/:id', async (req, res, next) => {
+router.put('/edit/:workoutId', async (req, res, next) => {
   try {
-    const workoutId = req.params.id;
-    const updatedWorkout = req.body.workout;
-
-    const workout = await Workout.findByIdAndUpdate(workoutId, updatedWorkout, { new: true });
-
-    if (!workout) {
-      return res.json({ message: 'Workout not found' });
+    const { workoutId } = req.params;
+    const { workout } = req.body;
+    
+    if (!workout || !workout.exercises) {
+      return res.status(400).json({ message: 'Error fetching workouts or exercises' });
     }
 
-    res.json({ message: 'Workout updated successfully', workout });
+    const updatedWorkout = await Workout.findById(workoutId).populate('exercises');
+
+    if (!updatedWorkout) {
+      return res.status(404).json({ message: 'Workout not found' });
+    }
+
+    const exerciseUpdates = workout.exercises.map(async (e, i) => {
+      const exerciseId = updatedWorkout.exercises[i]._id;
+      await Exercise.findByIdAndUpdate(exerciseId, e);
+    });
+
+    await Promise.all(exerciseUpdates);
+    const finalWorkout = await Workout.findById(workoutId).populate('exercises');
+
+    res.json({updatedWorkout: finalWorkout});
+    console.log('FINALWORKOUT:', finalWorkout)
   }
   catch (err) {
     console.log(err)
