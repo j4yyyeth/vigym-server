@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var exercisesRouter = require('./routes/exercises');
 var workoutsRouter = require('./routes/workouts');
+var trainerRouter = require('./routes/trainer');
 
 const { error } = require('console');
 
@@ -34,6 +35,7 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/exercises', exercisesRouter);
 app.use('/workouts', workoutsRouter);
+app.use('/trainer', trainerRouter);
 
 app.use(function (req, res, next) {
     next(createError(404));
