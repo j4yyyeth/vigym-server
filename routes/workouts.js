@@ -73,22 +73,33 @@ router.post('/create/:userId', async (req, res, next) => {
 
 router.delete('/delete/:id', async (req, res, next) => {
   try {
-    const workoutId = req.params.id;
+    const { id: workoutId } = req.params;
     const workout = await Workout.findById(workoutId);
-  
-    if (!workout) {
-      res.json({message: 'error getting workout'});
-    }
-  
-    await Promise.all(workout.exercises.map((e) => { return Exercise.findByIdAndDelete(e) }));
 
+    if (!workout) {
+      return res.json({message: 'error getting workout'});
+    }
+
+    const user = await User.findOne({ workouts: workoutId });
+
+    if (!user) {
+      return res.json({ message: "error finding user" });
+    }
+
+    await User.updateOne(
+      { _id: user._id },
+      { $pull: { workouts: workoutId } }
+    );
+
+    await Promise.all(workout.exercises.map((e) => { return Exercise.findByIdAndDelete(e) }));
     await Workout.findByIdAndDelete(workoutId);
+
+    res.json({ message: "workout deleted successfully" });
   }
   catch (err) {
     console.log(err);
   }
-
-})
+});
 
 router.put('/edit/:workoutId', async (req, res, next) => {
   try {
