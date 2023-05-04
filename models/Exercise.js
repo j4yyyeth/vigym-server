@@ -2,9 +2,18 @@ const { Schema, model } = require('mongoose');
 
 const exerciseSchema = new Schema (
     {
-        exercise: String,
-        sets: Number,
-        reps: Number,
+        exercise: {
+            type: String,
+            required: true
+        },
+        sets: {
+            type: Number,
+            required: true
+        },
+        reps: {
+            type: Number,
+            required: true
+        },
         weight: Number
     },
     
