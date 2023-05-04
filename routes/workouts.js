@@ -73,7 +73,7 @@ router.post('/create/:userId', async (req, res, next) => {
 
 router.delete('/delete/:id', async (req, res, next) => {
   try {
-    const { workoutId } = req.params.id;
+    const workoutId = req.params.id;
     const workout = await Workout.findById(workoutId);
   
     if (!workout) {
