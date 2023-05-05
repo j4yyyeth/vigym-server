@@ -14,13 +14,7 @@ const exerciseSchema = new Schema (
             type: Number,
             required: true
         },
-        weight: Number,
-        cardio: {
-            type: Boolean,
-            default: false
-        },
-        cardioType: String,
-        cardioTime: Number,
+        weight: Number
     },
     
     {

@@ -65,7 +65,6 @@ router.post("/create/:userId", async (req, res, next) => {
     user.workouts.push(workout._id);
     await user.save();
 
-    console.log(workout);
     res.json({ workout });
   } catch (err) {
     console.log(err);
@@ -122,6 +121,11 @@ router.put('/edit/:workoutId', async (req, res, next) => {
       const exerciseId = updatedWorkout.exercises[i]._id;
       await Exercise.findByIdAndUpdate(exerciseId, e);
     });
+
+    if (workout.cardio) {
+      updatedWorkout.cardio = workout.cardio;
+      await updatedWorkout.save();
+    }    
 
     await Promise.all(exerciseUpdates);
     const finalWorkout = await Workout.findById(workoutId).populate('exercises');
