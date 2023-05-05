@@ -12,13 +12,15 @@ const openai = new OpenAIApi(configuration);
 
 router.post('/', async (req, res, next) => {
     const { message } = req.body;
+    const context = process.env.TRAINER_CONTEXT
 
     const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
         messages: [
+            {role: 'assistant', content: context},
             {role: 'user', content: message}
         ],
-        max_tokens: 150,
+        max_tokens: 350,
         n: 1,
         stop: null,
         temperature: 0.7
