@@ -4,6 +4,7 @@ var router = express.Router();
 const User = require('../models/User');
 const Workout = require('../models/Workout');
 const Exercise = require('../models/Exercise');
+const Comment = require('../models/Comment');
 
 router.get('/user/:userId', async (req, res, next) => {
   try {
@@ -22,7 +23,7 @@ router.get('/user/:userId', async (req, res, next) => {
   catch (err) {
     console.log(err)
   }
-})
+});
 
 router.get('/all', async (req, res, next) => {
   try {
@@ -37,7 +38,7 @@ router.get('/all', async (req, res, next) => {
   catch (err) {
     console.log(err);
   }
-})
+});
 
 router.post('/create/:userId', async (req, res, next) => {
   try {
@@ -69,7 +70,7 @@ router.post('/create/:userId', async (req, res, next) => {
   catch (err) {
     console.log(err);
   }
-})
+});
 
 router.delete('/delete/:id', async (req, res, next) => {
   try {
@@ -92,6 +93,7 @@ router.delete('/delete/:id', async (req, res, next) => {
     );
 
     await Promise.all(workout.exercises.map((e) => { return Exercise.findByIdAndDelete(e) }));
+    await Comment.deleteMany({ workoutId: workoutId });
     await Workout.findByIdAndDelete(workoutId);
 
     res.json({ message: "workout deleted successfully" });
@@ -125,12 +127,35 @@ router.put('/edit/:workoutId', async (req, res, next) => {
     const finalWorkout = await Workout.findById(workoutId).populate('exercises');
 
     res.json({updatedWorkout: finalWorkout});
-    console.log('FINALWORKOUT:', finalWorkout)
   }
   catch (err) {
-    console.log(err)
+    console.log(err);
   }   
 });
 
+router.put("/schedule/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { schedule } = req.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { schedule },
+      { new: true }
+    ).populate("schedule.workout");
+    res.json(user.schedule);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get("/schedule/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).populate("schedule.workout");
+    res.json(user.schedule);
+  } catch (error) {
+    console.log(err);
+  }
+});
 
 module.exports = router;

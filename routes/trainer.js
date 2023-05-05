@@ -5,7 +5,7 @@ const { Configuration, OpenAIApi } = require('openai');
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
-})
+});
 
 const openai = new OpenAIApi(configuration);
 
@@ -16,12 +16,12 @@ router.post('/', async (req, res, next) => {
     const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
         messages: [
-            {role: 'user', content: message},
+            {role: 'user', content: message}
         ],
         max_tokens: 150,
         n: 1,
         stop: null,
-        temperature: 0.7,
+        temperature: 0.7
     });
 
     try {
@@ -30,7 +30,7 @@ router.post('/', async (req, res, next) => {
     catch (err) {
         console.log(err);
     }
-})
+});
 
 
 module.exports = router;

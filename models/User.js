@@ -19,12 +19,22 @@ const userSchema = new Schema (
             required: true
         },
 
-        workouts: [{type: Schema.Types.ObjectId, ref: "Workout"}]
+        workouts: [{type: Schema.Types.ObjectId, ref: "Workout"}],
+
+        schedule: [
+            {
+              dayIndex: Number,
+              workout: {
+                type: Schema.Types.ObjectId,
+                ref: 'Workout',
+              },
+            },
+          ]
     },
 
     {
         timeseries: true,
-        timestamps: true,
+        timestamps: true
     }
 )
 
