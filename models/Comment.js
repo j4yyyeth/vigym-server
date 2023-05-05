@@ -6,11 +6,26 @@ const commentSchema = new Schema (
             type: String,
             required: true
         },
-        author: { type: Schema.Types.ObjectId, ref: 'User' }
+
+        author: { 
+            type: Schema.Types.ObjectId, 
+            ref: 'User' 
+        },
+
+        workoutId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Workout',
+            required: true
+        },
+
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
     },
     {
         timeseries: true,
-        timestamps: true,
+        timestamps: true
     }
 )
 

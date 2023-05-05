@@ -6,7 +6,7 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var cors = require('cors');
 
-var usersRouter = require('./routes/users');
+var commentsRouter = require('./routes/comments');
 var authRouter = require('./routes/auth');
 var exercisesRouter = require('./routes/exercises');
 var workoutsRouter = require('./routes/workouts');
@@ -31,7 +31,7 @@ app.use(
     })
   );
 
-app.use('/users', usersRouter);
+app.use('/comments', commentsRouter);
 app.use('/auth', authRouter);
 app.use('/exercises', exercisesRouter);
 app.use('/workouts', workoutsRouter);
