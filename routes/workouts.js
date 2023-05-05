@@ -40,34 +40,34 @@ router.get('/all', async (req, res, next) => {
   }
 });
 
-router.post('/create/:userId', async (req, res, next) => {
+router.post("/create/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const { exercises } = req.body;
+    const { exercises, cardio } = req.body;
 
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.json({message: 'User not found'});
+      return res.json({ message: "User not found" });
     }
 
-    const workout = new Workout({user: user._id});
+    const workout = new Workout({ user: user._id, cardio });
     await workout.save();
 
     const createdExercises = await Exercise.insertMany(exercises);
-    
+
     createdExercises.forEach((exercise) => {
       workout.exercises.push(exercise._id);
-    })
+    });
 
     await workout.save();
 
     user.workouts.push(workout._id);
     await user.save();
 
-    res.json({workout});
-  }
-  catch (err) {
+    console.log(workout);
+    res.json({ workout });
+  } catch (err) {
     console.log(err);
   }
 });
