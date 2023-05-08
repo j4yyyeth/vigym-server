@@ -137,6 +137,16 @@ router.put('/edit/:workoutId', async (req, res, next) => {
   }   
 });
 
+router.get("/schedule/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).populate("schedule.workout");
+    res.json(user.schedule);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 router.put("/schedule/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -148,16 +158,6 @@ router.put("/schedule/:userId", async (req, res) => {
     ).populate("schedule.workout");
     res.json(user.schedule);
   } catch (err) {
-    console.log(err);
-  }
-});
-
-router.get("/schedule/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const user = await User.findById(userId).populate("schedule.workout");
-    res.json(user.schedule);
-  } catch (error) {
     console.log(err);
   }
 });
