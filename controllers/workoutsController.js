@@ -70,7 +70,7 @@ const create_workout = async (req, res, next) => {
     }
 };
 
-const delete_workout = async (req, res, next) => { 
+const delete_workout = async (req, res, next) => {
     try {
       const { id: workoutId } = req.params;
       const workout = await Workout.findById(workoutId);
@@ -178,4 +178,4 @@ module.exports = {
     update_workout,
     workout_schedule,
     update_schedule
-}
+};
