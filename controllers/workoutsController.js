@@ -5,7 +5,7 @@ const Comment = require('../models/Comment');
 
 const all_workouts = async (req, res, next) => {
     try {
-      const allWorkouts = await Workout.find().populate('exercises');
+      const allWorkouts = await Workout.find().populate('user').populate('exercises');
   
       if (!allWorkouts) {
         res.json({message: 'Error loading workouts'});
