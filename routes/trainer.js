@@ -33,25 +33,22 @@ router.post('/', async (req, res, next) => {
 
     const modifiedContext = `${context}. This user's workout data: ${workoutData}`;
 
-    const response = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: [
-            {role: 'assistant', content: modifiedContext},
-            {role: 'user', content: message}
-        ],
-        max_tokens: 350,
-        n: 1,
-        stop: null,
-        temperature: 0.7
+    const prompt = `${modifiedContext}\nUser: ${message}\nAssistant:`;
+
+    const response = await openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: prompt,
+        max_tokens: 150,
+        temperature: 0.7,
+        top_p: 1
     });
 
     try {
-        res.json({response: response.data.choices[0].message.content});
+        res.json({response: response.data.choices[0].text});
     }
     catch (err) {
         console.log(err);
     }
 });
-
 
 module.exports = router;
