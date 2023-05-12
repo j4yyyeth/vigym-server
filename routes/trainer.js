@@ -13,7 +13,7 @@ const openai = new OpenAIApi(configuration);
 
 router.post('/', async (req, res, next) => {
     const context = process.env.TRAINER_CONTEXT;
-    const { message, userId } = req.body;
+    const { message, userId, conversationHistory } = req.body;
 
     const user = await User.findById(userId).populate({
         path: 'workouts',
@@ -33,7 +33,8 @@ router.post('/', async (req, res, next) => {
 
     const modifiedContext = `${context}. This user's workout data: ${workoutData}`;
 
-    const prompt = `${modifiedContext}\nUser: ${message}\nAssistant:`;
+    const prompt = `${modifiedContext}\n${conversationHistory}\nUser: ${message}\nAssistant:`;
+
 
     const response = await openai.createCompletion({
         model: 'text-davinci-003',
